@@ -1,0 +1,93 @@
+.trans-content-wrap {
+    font-size: 15px;
+    line-height: 15px;
+    margin: 10px;
+    padding: 5px;
+    min-width: 400px;
+    max-width: 600px;
+    min-height: 80px;
+}
+
+.trans-content-wrap div {
+    margin: 5px;
+}
+
+.trans-content-wrap .content {
+    margin: 0 auto;
+}
+
+.trans-content-wrap .content select {
+    /*width: 50px;*/
+    height: 25px;
+}
+
+.trans-content-wrap .content option {
+    width: 50px;
+}
+
+.trans-content-wrap #text-input {
+    width: 250px;
+    height: 25px;
+    display: inline;
+}
+
+.trans-content-wrap #lang-select {
+    text-align: center;
+    appearance: auto;
+    max-width: unset;
+    height: 25px;
+    margin: 0;
+    padding: 0;
+    color: white;
+    border: none;
+    background: #1196db;
+    border-radius: 6px;
+}
+
+.trans-content-wrap .search-btn {
+    cursor: pointer;
+    width: 60px;
+    height: 25px;
+    display: inline;
+    color: white;
+    background-color: #3b93ff;
+    background-image: -webkit-linear-gradient(top,#4d90fe,#4787ed);
+    border: none;
+    border-radius: 2px;
+}
+
+.trans-content-wrap #new-translation {
+    cursor: pointer;
+    background-size: 90%;
+    float: right;
+    color: #3b93ff;
+}
+
+.trans-content-wrap .origin-lang, .trans-content-wrap .target-lang {
+    color: #4285f4;
+    font-size: larger;
+    padding: 5px;
+}
+
+.trans-content-wrap .origin-text, .trans-content-wrap .target-text {
+    color: black;
+    padding: 5px;
+}
+
+.trans-content-wrap .red {
+    color: red;
+}
+
+#donate-wrap {
+    margin: 10px 10px 0 0;
+    padding: 10px;
+}
+
+#donate-wrap img {
+    padding-bottom: 5px;
+    vertical-align: middle;
+}
+
+#donate-wrap a {
+    vertical-align: middle;
+}

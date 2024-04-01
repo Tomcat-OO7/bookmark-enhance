@@ -1,0 +1,9 @@
+.project
+.classpath
+logs/
+doc/
+target/
+.idea/
+*.iml
+.DS_Store
+classes/

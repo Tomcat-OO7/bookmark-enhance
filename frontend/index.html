@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>简单搜索引擎</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            }
+
+        #search-box {
+            text-align: center;
+            margin-top: 0;
+            }
+
+        #search-input {
+            width: 50%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+            }
+
+        #search-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 20px;
+            background-color: #f8f8f8;
+            cursor: pointer;
+            margin-left: 10px;
+            }
+
+        #search-button:hover {
+            background-color: #e8e8e8;
+            }
+
+        .result-item {
+            margin-bottom: 20px;
+            padding: 20px;
+            border-bottom: 1px solid #ddd;
+            }
+
+        .result-item a {
+            font-size: 18px;
+            color: #1a0dab;
+            text-decoration: none;
+            }
+
+        .result-item a:hover {
+            text-decoration: underline;
+            }
+
+        .result-item .url {
+            color: #006621;
+            font-size: 14px;
+            }
+
+        .result-item .summary {
+            color: #545454;
+            font-size: 14px;
+            }
+
+        .delete-button {
+            float: right;
+            background-color: #ff0000;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            padding: 5px 10px;
+            margin-left: 10px;
+            }
+
+        #pagination {
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #f8f8f8;
+            padding: 10px 0;
+            }
+
+        .page-link {
+            margin: 0 5px;
+            cursor: pointer;
+            color: #000;
+            text-decoration: none;
+            }
+
+        .page-link:hover {
+            text-decoration: underline;
+            }
+
+        .page-info {
+            margin-top: 10px;
+            }
+
+        #logo {
+            display: block;
+            margin: 30px auto;
+            width: 100px; /* 根据您的 logo 尺寸进行调整 */
+            }
+    </style>
+</head>
+<body>
+<img id="logo" src="logo.svg" alt="Logo"> <!-- 添加 logo 图片 -->
+<div id="search-box">
+    <input type="text" id="search-input" placeholder="搜索关键词" onkeydown="if(event.keyCode==13){performSearch();}">
+    <button id="search-button" onclick="performSearch()">搜索</button>
+</div>
+<div id="results"></div>
+<div id="pagination">
+    <span id="page-info"></span>
+</div>
+
+<script>
+    const pageSize = 20;
+    let currentPage = 1;
+    let totalPages = 0;
+
+    function performSearch(pageNum = 1) {
+        if (pageNum < 1) {
+            return;
+        }
+
+        currentPage = pageNum;
+        var keyword = document.getElementById('search-input').value;
+        var url = `http://localhost:8082/bookmark/search?keyword=${encodeURIComponent(keyword)}&pageNum=${pageNum}&pageSize=${pageSize}`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                var resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = '';
+
+                data.content.forEach(item => {
+                    var itemDiv = document.createElement('div');
+                    itemDiv.className = 'result-item';
+
+                    var titleLink = document.createElement('a');
+                    titleLink.href = item.url;
+                    titleLink.innerHTML = item.highlight;
+                    titleLink.target = '_blank';
+
+                    var urlDiv = document.createElement('div');
+                    urlDiv.className = 'url';
+                    urlDiv.innerHTML = item.url;
+
+                    var summaryDiv = document.createElement('div');
+                    summaryDiv.className = 'summary';
+                    summaryDiv.innerHTML = item.aiSummary;
+
+                    // 删除按钮
+                    var deleteButton = document.createElement('button');
+                    deleteButton.className = 'delete-button';
+                    deleteButton.textContent = '删除';
+                    deleteButton.onclick = function () {
+                        deleteDoc(item.id);
+                    };
+
+                    itemDiv.appendChild(titleLink);
+                    itemDiv.appendChild(urlDiv);
+                    itemDiv.appendChild(summaryDiv);
+                    itemDiv.appendChild(deleteButton);
+
+                    resultsDiv.appendChild(itemDiv);
+                });
+
+                // 更新分页信息
+                document.getElementById('page-info').textContent = `共 ${(data.totalCount)} 条`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    function deleteDoc(docId) {
+        var url = `http://localhost:8082/bookmark/deleteDoc?id=${docId}`;
+        fetch(url, {method: 'GET'})
+            .then(data => {
+                alert('删除成功');
+                performSearch(currentPage); // 重新加载当前页
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('删除失败');
+            });
+    }
+</script>
+</body>
+</html>

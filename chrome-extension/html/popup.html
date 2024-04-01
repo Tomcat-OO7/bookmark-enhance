@@ -1,0 +1,46 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>聚合翻译</title>
+		<link rel="stylesheet" type="text/css" href="../css/page.css">
+	</head>
+	<body class="trans-content-wrap">
+		<div class="content">
+			<div id="search-bar">
+				<input type="text" name="text-input" id="text-input" autofocus="">
+				<select>
+					<option value="1">百度</option>
+					<option value="2" selected>谷歌</option>
+					<option value="3">Bing</option>
+					<option value="4">有道</option>
+<!--					<option	value="5">ChatGpt</option>-->
+				</select>
+				<button class="search-btn" id="translate-btn">翻译</button>
+				<!--			<div id="buttons">-->
+				<!--				<a class="gtx-a" id="translate-page" href="">翻译此页面</a>-->
+				<!--				<a class="gtx-a" id="more" target="_blank" style="margin-left: 32px; display: none;" href=""></a>-->
+				<!--			</div>-->
+			</div>
+			<div class="translate-content" style="display: none">
+				<div id="new-translation">返回</div>
+				<div id="translation" style="display: inline;"></div>
+			</div>
+		</div>
+
+		<div id="donate-wrap">
+			<img src="../imgs/donate.png" />
+			<a target="_blank" href="https://zhangjh.me/donate.html">支持我一下?</a>
+		</div>
+
+		<!--footer class="gtx-footer">
+			<div id="autoOption"></div>
+			© <span id="year">2015</span> Google -
+			<a class="gtx-a" id="options-link" target="_blank" href="options.html">扩展程序选项</a> -
+			<a class="gtx-a" id="translate-link" target="_blank" href="https://translate.google.com/?source=gtx">Google 翻译</a>
+		</footer-->
+
+		<script src="../js/jquery.min.js" type="module"></script>
+		<script src="../js/common.js" type="module"></script>
+		<script src="../js/popup.js" type="module"></script>
+	</body>
+</html>
