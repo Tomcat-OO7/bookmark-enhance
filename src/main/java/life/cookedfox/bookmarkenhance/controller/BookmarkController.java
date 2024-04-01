@@ -8,7 +8,10 @@ import life.cookedfox.bookmarkenhance.model.Completion;
 import life.cookedfox.bookmarkenhance.model.CompletionRequestParam;
 import life.cookedfox.bookmarkenhance.model.Page;
 import life.cookedfox.bookmarkenhance.service.ICompletionService;
+import life.cookedfox.bookmarkenhance.service.IExtractService;
+import life.cookedfox.bookmarkenhance.service.impl.SnapshotService;
 import life.cookedfox.bookmarkenhance.utils.LambdaUtils;
+import life.cookedfox.bookmarkenhance.utils.SystemCommandUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
@@ -36,7 +39,13 @@ public class BookmarkController {
     ICompletionService completionService;
 
     @Resource
+    IExtractService extractService;
+
+    @Resource
     IndexEngine indexEngine;
+
+    @Resource
+    SnapshotService snapshotService;
 
     @GetMapping("/deleteDoc")
     public String deleteDoc(@RequestParam String id) {
@@ -65,6 +74,9 @@ public class BookmarkController {
                         return;
                     }
 
+                    snapshotService.saveSingleFile(url);
+
+
                     Completion completion = completionService.completions(CompletionRequestParam.builder()
                             .model("silent_search")
                             .messages(List.of(CompletionRequestParam.CompletionMessage.builder()
@@ -85,6 +97,7 @@ public class BookmarkController {
                             .url(url)
                             .snapshotUrl(url)
                             .aiSummary(aiSummary)
+                            .content(extractService.extract(url, ""))
                             .aiTagList(List.of())
                             .build());
                 }

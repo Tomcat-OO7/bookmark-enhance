@@ -9,12 +9,6 @@ import java.io.InputStreamReader;
 @Slf4j
 public class SystemCommandUtils {
 
-    private static final String DOCKER_RUN_SINGLEFILE = "docker run singlefile %s > %s";
-
-    public static void saveSingleFile(String url, String filePath) {
-        exec(String.format(DOCKER_RUN_SINGLEFILE, url, filePath));
-    }
-
     public static void exec(String command) {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder();

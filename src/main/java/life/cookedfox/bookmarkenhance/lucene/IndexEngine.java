@@ -59,6 +59,7 @@ public class IndexEngine {
             document.add(new StringField(LambdaUtils.name(Bookmark::getId), UUID.randomUUID().toString(), Field.Store.YES));
             document.add(new StringField(LambdaUtils.name(Bookmark::getUrl), bookmark.getUrl(), Field.Store.YES));
             document.add(new TextField(LambdaUtils.name(Bookmark::getAiSummary), bookmark.getAiSummary(), Field.Store.YES));
+            document.add(new TextField(LambdaUtils.name(Bookmark::getContent), bookmark.getContent(), Field.Store.YES));
             document.add(new TextField(LambdaUtils.name(Bookmark::getAiTagList), String.join(" ", bookmark.getAiTagList()), Field.Store.YES));
             document.add(new StringField(LambdaUtils.name(Bookmark::getSnapshotUrl), bookmark.getSnapshotUrl(), Field.Store.YES));
             document.add(new StringField(LambdaUtils.name(Bookmark::getCreateTime), LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME), Field.Store.YES));

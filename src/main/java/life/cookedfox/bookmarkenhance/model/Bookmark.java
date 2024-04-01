@@ -25,6 +25,8 @@ public class Bookmark {
 
     private String aiSummary;
 
+    private String content;
+
     private List<String> aiTagList;
 
     private String snapshotUrl;

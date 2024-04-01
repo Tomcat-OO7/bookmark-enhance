@@ -1,21 +1,27 @@
-// (function () {
-//     window.initLangs();
+var currentUrl;
+chrome.tabs.query({currentWindow: true, active: true}, function (tabs) {
+    currentUrl = tabs[0].url;
+});
 
-//     const translateEngine = localStorage.getItem("translate_engine");
-//     if(translateEngine) {
-//         $("#search-bar select").val(translateEngine);
-//     }
-
-//     let translateBtn = $("#translate-btn");
-//     translateBtn.on("click", function() {
-//         let text = $("#text-input").val().trim();
-//         console.log(text);
-//         let type = $("select").val();
-//         if(text && type) {
-//             // 请求翻译接口
-//             translate(type, text, undefined, undefined);
-//         }
-//     });
+document.getElementById('send-btn').addEventListener('click', function () {
+    var jsPath = document.getElementById('html-js-path').value;
+    fetch('http://localhost:8082/bookmark/addTask', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            url: currentUrl,
+            jsPath: jsPath
+        }),
+    }).then(response => response.text())
+        .then(text => {
+            console.log('请求成功:', text);
+        })
+        .catch((error) => {
+            console.error('请求失败:', error);
+        });
+})
 
 // //    let translatePageBtn = $("#translate-page");
 // //    console.log($("body").html());
