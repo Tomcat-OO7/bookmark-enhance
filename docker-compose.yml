@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  node_app:
+  extractor:
     image: node:20
     volumes:
       - ./extractor:/app
@@ -10,3 +10,12 @@ services:
     command: node index.js
     ports:
       - "3003:3000"
+  snapshotor:
+    image: my-singlefile
+    volumes:
+      - ./snapshotor:/app
+      - ./snapshot:/home/node
+    working_dir: /app
+    command: node index.js
+    ports:
+      - "3004:3000"
