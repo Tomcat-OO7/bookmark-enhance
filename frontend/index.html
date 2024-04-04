@@ -62,17 +62,6 @@
             margin-top: 10px;
             }
 
-        .delete-button {
-            float: right;
-            background-color: #ff0000;
-            color: #ffffff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            padding: 5px 10px;
-            margin-left: 10px;
-            }
-
         #pagination {
             text-align: center;
             margin-top: 30px;
@@ -127,19 +116,58 @@
             bottom: 10px;
             right: 10px;
             display: flex;
-            gap: 10px;
+            gap: 5px;
             }
 
         .icon {
             background: none;
             border: none;
             cursor: pointer;
+            border-radius: 5px;
             }
 
         .icon img {
             width: 20px; /* 设置图标大小 */
             height: 20px;
+            border-radius: 50%; /* 设置圆角 */
             }
+
+        .icon:hover {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            transition: box-shadow 0.2s;
+            }
+
+        /* 确认删除对话框的样式 */
+        .confirm-delete-dialog {
+            display: none;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 200;
+            }
+
+        .confirm-delete-dialog button {
+            margin: 10px;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            }
+
+        .confirm-delete-dialog .confirm {
+            background-color: #f44336;
+            color: white;
+            }
+
+        .confirm-delete-dialog .cancel {
+            background-color: #ddd;
+            }
+
     </style>
 </head>
 <body>
@@ -203,17 +231,19 @@
                     iconsDiv.className = 'icons';
 
                     // 创建链接原文图标
-                    var linkIcon = document.createElement('a');
-                    linkIcon.href = item.url;
-                    linkIcon.target = '_blank';
+                    var linkIcon = document.createElement('div');
                     linkIcon.className = 'icon';
+                    var linkIconA = document.createElement('a');
+                    linkIconA.href = item.url;
+                    linkIconA.target = '_blank';
                     var linkIconImg = document.createElement('img');
                     linkIconImg.src = 'link.svg';
                     linkIconImg.alt = 'Link';
-                    linkIcon.appendChild(linkIconImg);
+                    linkIconA.appendChild(linkIconImg);
+                    linkIcon.append(linkIconA);
 
                     // 创建删除图标
-                    var deleteIcon = document.createElement('button');
+                    var deleteIcon = document.createElement('div');
                     deleteIcon.className = 'icon';
                     var deleteIconImg = document.createElement('img');
                     deleteIconImg.src = 'delete.svg';
@@ -247,27 +277,53 @@
                     // 添加其他元素到卡片...
                     resultsDiv.appendChild(itemDiv);
                 });
-
-                // 更新分页信息
-                totalPages = Math.ceil(data.totalCount / pageSize);
-                document.getElementById('page-info').textContent = `第 ${currentPage} 页，共 ${totalPages} 页`;
             })
             .catch(error => {
                 console.error('Error:', error);
             });
     }
 
+    // 删除操作的二次确认
     function deleteDoc(docId) {
+        // 创建确认对话框
+        var confirmDialog = document.createElement('div');
+        confirmDialog.className = 'confirm-delete-dialog';
+        confirmDialog.innerHTML = `
+        <p>确定要删除吗？</p>
+        <button class="confirm" onclick="confirmDelete('${docId}')">确定</button>
+        <button class="cancel" onclick="cancelDelete()">取消</button>
+    `;
+        document.body.appendChild(confirmDialog);
+        confirmDialog.style.display = 'block';
+    }
+
+    // 确认删除
+    function confirmDelete(docId) {
         var url = `http://localhost:8082/bookmark/deleteDoc?id=${docId}`;
         fetch(url, {method: 'GET'})
             .then(data => {
                 alert('删除成功');
                 performSearch(currentPage); // 重新加载当前页
+                closeConfirmDialog(); // 关闭确认对话框
             })
             .catch(error => {
                 console.error('Error:', error);
                 alert('删除失败');
+                closeConfirmDialog(); // 关闭确认对话框
             });
+    }
+
+    // 取消删除
+    function cancelDelete() {
+        closeConfirmDialog(); // 关闭确认对话框
+    }
+
+    // 关闭确认对话框
+    function closeConfirmDialog() {
+        var confirmDialog = document.querySelector('.confirm-delete-dialog');
+        if (confirmDialog) {
+            document.body.removeChild(confirmDialog);
+        }
     }
 </script>
 </body>

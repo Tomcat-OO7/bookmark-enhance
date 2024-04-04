@@ -1,5 +1,6 @@
 package life.cookedfox.bookmarkenhance.controller;
 
+import io.micrometer.common.util.StringUtils;
 import jakarta.annotation.Resource;
 import life.cookedfox.bookmarkenhance.constant.ApplicationConstants;
 import life.cookedfox.bookmarkenhance.lucene.IndexEngine;
@@ -16,9 +17,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
@@ -73,7 +72,9 @@ public class BookmarkController {
                         return;
                     }
 
+                    log.debug("{} snapshotting...", url);
                     snapshotService.snapshot(url);
+                    log.info("{} snapshot end", url);
 
                     Completion completion = completionService.completions(CompletionRequestParam.builder()
                             .model("silent_search")
@@ -91,11 +92,15 @@ public class BookmarkController {
                             .map(Completion.ChoiceOfCompletion::getMessage)
                             .map(Completion.MessageOfChoice::getContent).orElse("接口请求异常");
 
+                    log.debug("{} extracting content", url);
+                    String content = extractService.extract(url, "");
+                    log.info("{} extract end", url);
+
                     indexEngine.addDocument(Bookmark.builder()
                             .url(url)
                             .snapshotUrl(url)
                             .aiSummary(aiSummary)
-                            .content(extractService.extract(url, ""))
+                            .content(content)
                             .aiTagList(List.of())
                             .build());
                 } finally {
@@ -112,15 +117,41 @@ public class BookmarkController {
         return "OK";
     }
 
+    @GetMapping("/checkTask")
+    public String checkTask(@RequestParam String url) {
+        if (Objects.nonNull(lockMap.get(url))) {
+            log.info("{} already in task list", url);
+            return "EXIST TASK";
+        }
+
+        // 是否已经解析过的url
+        List<Bookmark> bookmarks = indexEngine.termSearch(url, LambdaUtils.name(Bookmark::getUrl));
+        if (!CollectionUtils.isEmpty(bookmarks)) {
+            log.info("{} already indexed", url);
+            return "EXIST INDEX";
+        }
+
+        return "OK";
+    }
+
     @GetMapping("/search")
     public Page<Bookmark> search(@RequestParam String keyword, @RequestParam Integer pageNum, @RequestParam Integer pageSize) {
         ApplicationConstants.pageNumberAndPageSizeThreadLocal.set(Map.entry(pageNum, pageSize));
 
         List<Bookmark> termSearch = indexEngine.termSearch(keyword, LambdaUtils.name(Bookmark::getUrl));
         if (!CollectionUtils.isEmpty(termSearch)) {
-            termSearch.stream().forEach(e -> e.setHighlight(Map.of("url", "<b>" + keyword + "</b>"
-                    , "aiSummary", Optional.ofNullable(e.getAiSummary()).orElse("")
-                    , "content", Optional.ofNullable(e.getContent()).orElse(""))));
+            termSearch.forEach(e -> {
+                Map<String, String> highlight = new HashMap<>();
+                highlight.put(LambdaUtils.name(Bookmark::getUrl), "<b>" + keyword + "</b>");
+                if (StringUtils.isEmpty(e.getAiSummary())) {
+                    highlight.put(LambdaUtils.name(Bookmark::getAiSummary), e.getAiSummary());
+                }
+                if (StringUtils.isEmpty(e.getContent())) {
+                    highlight.put(LambdaUtils.name(Bookmark::getContent), e.getContent());
+                }
+                e.setHighlight(highlight);
+            });
+
             return Page.of(pageNum, pageSize, termSearch.size(), termSearch);
         }
         return indexEngine.search(keyword, LambdaUtils.name(Bookmark::getAiSummary), LambdaUtils.name(Bookmark::getContent));

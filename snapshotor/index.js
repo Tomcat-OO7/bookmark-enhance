@@ -1,5 +1,6 @@
 import express from 'express';
 import {execSync} from 'child_process';
+import fs from 'fs';
 
 const app = express();
 const port = 3000;
@@ -13,15 +14,26 @@ app.post('/snapshot', (req, res) => {
     console.log(req.body);
     const data = req.body;
     const url = data['url'];
+
+    const outputDir = "/home/node";
+    const filename = btoa(url) + ".html"
+
+    if (fs.existsSync(`${outputDir}/${filename}`)) {
+        return res.json({code: 200});
+    }
+
     try {
         execSync("node /usr/src/app/node_modules/single-file-cli/single-file \"" + url + "\" "
-            + btoa(url) + ".html "
-            + "--browser-executable-path /usr/bin/chromium-browser --output-directory /home/node --dump-content");
+            + filename
+            + ` --browser-executable-path /usr/bin/chromium-browser --output-directory ${outputDir}`
+            + " --dump-content"
+        );
+
         console.log(url + " file saved");
-        res.json({ code: 200 });
+        res.json({code: 200});
     } catch (err) {
         console.error(err);
-        res.json({ code: 500 });
+        res.json({code: 500});
     }
 });
 

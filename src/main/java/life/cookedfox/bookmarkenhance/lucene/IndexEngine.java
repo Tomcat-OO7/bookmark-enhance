@@ -103,10 +103,11 @@ public class IndexEngine {
 
                     Map<String, String> highlight = new HashMap<>();
                     for (String field : fields) {
-                        String content = document.get(field);
-                        if (StringUtils.isNotBlank(content)) {
-                            String highlightedContent = highlighter.getBestFragment(analyzer, LambdaUtils.name(Bookmark::getAiSummary), content);
-                            highlight.put(field, highlightedContent);
+                        if (StringUtils.isNotBlank(document.get(field))) {
+                            String highlightedContent = highlighter.getBestFragment(analyzer, LambdaUtils.name(Bookmark::getAiSummary), document.get(field));
+                            if (StringUtils.isNotBlank(highlightedContent)) {
+                                highlight.put(field, highlightedContent);
+                            }
                         }
                     }
                     return Bookmark.builder()
