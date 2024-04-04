@@ -115,6 +115,14 @@ public class BookmarkController {
     @GetMapping("/search")
     public Page<Bookmark> search(@RequestParam String keyword, @RequestParam Integer pageNum, @RequestParam Integer pageSize) {
         ApplicationConstants.pageNumberAndPageSizeThreadLocal.set(Map.entry(pageNum, pageSize));
+
+        List<Bookmark> termSearch = indexEngine.termSearch(keyword, LambdaUtils.name(Bookmark::getUrl));
+        if (!CollectionUtils.isEmpty(termSearch)) {
+            termSearch.stream().forEach(e -> e.setHighlight(Map.of("url", "<b>" + keyword + "</b>"
+                    , "aiSummary", Optional.ofNullable(e.getAiSummary()).orElse("")
+                    , "content", Optional.ofNullable(e.getContent()).orElse(""))));
+            return Page.of(pageNum, pageSize, termSearch.size(), termSearch);
+        }
         return indexEngine.search(keyword, LambdaUtils.name(Bookmark::getAiSummary), LambdaUtils.name(Bookmark::getContent));
     }
 }
