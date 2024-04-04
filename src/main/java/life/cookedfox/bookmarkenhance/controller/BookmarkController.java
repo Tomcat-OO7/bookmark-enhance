@@ -11,7 +11,6 @@ import life.cookedfox.bookmarkenhance.service.ICompletionService;
 import life.cookedfox.bookmarkenhance.service.IExtractService;
 import life.cookedfox.bookmarkenhance.service.impl.SnapshotService;
 import life.cookedfox.bookmarkenhance.utils.LambdaUtils;
-import life.cookedfox.bookmarkenhance.utils.SystemCommandUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
@@ -66,8 +65,8 @@ public class BookmarkController {
 
         CompletableFuture.runAsync(() -> {
             ReentrantLock reentrantLock = lockMap.computeIfAbsent(url, e -> new ReentrantLock());
-            try {
-                if (reentrantLock.tryLock()) {
+            if (reentrantLock.tryLock()) {
+                try {
                     List<Bookmark> doubleCheckBookmarks = indexEngine.termSearch(url, LambdaUtils.name(Bookmark::getUrl));
                     if (!CollectionUtils.isEmpty(doubleCheckBookmarks)) {
                         log.info("{} already indexed", url);
@@ -99,12 +98,12 @@ public class BookmarkController {
                             .content(extractService.extract(url, ""))
                             .aiTagList(List.of())
                             .build());
+                } finally {
+                    if (reentrantLock.isLocked()) {
+                        reentrantLock.unlock();
+                    }
+                    lockMap.remove(url);
                 }
-            } finally {
-                if (reentrantLock.isLocked()) {
-                    reentrantLock.unlock();
-                }
-                lockMap.remove(url);
             }
         }, executor).exceptionally((e) -> {
             log.error("异常", e);
