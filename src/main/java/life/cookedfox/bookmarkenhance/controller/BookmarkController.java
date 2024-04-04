@@ -74,8 +74,7 @@ public class BookmarkController {
                         return;
                     }
 
-                    snapshotService.saveSingleFile(url);
-
+                    snapshotService.snapshot(url);
 
                     Completion completion = completionService.completions(CompletionRequestParam.builder()
                             .model("silent_search")
@@ -117,6 +116,6 @@ public class BookmarkController {
     @GetMapping("/search")
     public Page<Bookmark> search(@RequestParam String keyword, @RequestParam Integer pageNum, @RequestParam Integer pageSize) {
         ApplicationConstants.pageNumberAndPageSizeThreadLocal.set(Map.entry(pageNum, pageSize));
-        return indexEngine.search(keyword, LambdaUtils.name(Bookmark::getAiSummary));
+        return indexEngine.search(keyword, LambdaUtils.name(Bookmark::getAiSummary), LambdaUtils.name(Bookmark::getContent));
     }
 }

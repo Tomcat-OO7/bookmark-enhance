@@ -1,24 +1,29 @@
 package life.cookedfox.bookmarkenhance.service.impl;
 
-import life.cookedfox.bookmarkenhance.utils.SystemCommandUtils;
-import org.apache.tomcat.util.codec.binary.Base64;
+import jakarta.annotation.Resource;
+import life.cookedfox.bookmarkenhance.model.SnapshotResult;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
 
-import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 @Service
+@Slf4j
 public class SnapshotService {
 
-    @Value("${snapshot.cmd}")
-    private String cmd;
+    @Resource
+    RestClient restClient;
 
-    @Value("${snapshot.path}")
-    private String snapshotPath;
+    @Value("${snapshot.uri}")
+    String uri;
 
-    public void saveSingleFile(String url) {
-        SystemCommandUtils.exec(cmd
-                .replaceAll("\\$path", snapshotPath + "/" + Base64.encodeBase64String(url.getBytes(StandardCharsets.UTF_8)) + ".html")
-                .replaceAll("\\$url", url));
+    public void snapshot(String url) {
+        SnapshotResult res = restClient.post()
+                .uri(uri)
+                .body(Map.of("url", url))
+                .retrieve().body(SnapshotResult.class);
+        log.info("{} snapshot result {}", url, res);
     }
 }

@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @AllArgsConstructor
@@ -21,7 +22,7 @@ public class Bookmark {
     @NotEmpty
     private String url;
 
-    private String highlight;
+    private Map<String, String> highlight;
 
     private String aiSummary;
 
