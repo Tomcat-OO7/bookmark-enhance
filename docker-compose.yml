@@ -8,6 +8,14 @@ services:
       - "3002:8000"
     environment:
       - TZ=Asia/Shanghai
+    deploy:
+      resources:
+        limits:
+          cpus: '0.4'
+          memory: 200M
+        reservations:
+          cpus: '0.1'
+          memory: 20M
   extractor:
     image: node:20
     volumes:
@@ -17,6 +25,14 @@ services:
     command: node index.js
     ports:
       - "3003:3000"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.4'
+          memory: 200M
+        reservations:
+          cpus: '0.1'
+          memory: 20M
   snapshotor:
     build:
       context: ./snapshotor
@@ -29,6 +45,14 @@ services:
     command: node index.js
     ports:
       - "3004:3000"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.4'
+          memory: 200M
+        reservations:
+          cpus: '0.1'
+          memory: 20M
   main:
     image: openjdk:21-jdk-bullseye
     volumes:
@@ -36,6 +60,6 @@ services:
       - ./index:/app/bookmark-enhance-0.0.1-SNAPSHOT/index
       - ./snapshot:/app/bookmark-enhance-0.0.1-SNAPSHOT/snapshot
     working_dir: /app
-    command: sh -c "tar -xzf bookmark-enhance-0.0.1-SNAPSHOT.tar.gz && cd bookmark-enhance-0.0.1-SNAPSHOT && java -jar bookmark-enhance-0.0.1-SNAPSHOT.jar"
+    command: sh -c "tar -xzf bookmark-enhance-0.0.1-SNAPSHOT.tar.gz && cd bookmark-enhance-0.0.1-SNAPSHOT && java -Xmx2048m -jar bookmark-enhance-0.0.1-SNAPSHOT.jar"
     ports:
-      - "3005:8082"
+      - "18001:8082"

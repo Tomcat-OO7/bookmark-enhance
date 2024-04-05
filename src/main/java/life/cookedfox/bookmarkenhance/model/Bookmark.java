@@ -1,7 +1,6 @@
 package life.cookedfox.bookmarkenhance.model;
 
 
-import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +18,6 @@ public class Bookmark {
 
     private String id;
 
-    @NotEmpty
     private String url;
 
     private Map<String, String> highlight;

@@ -14,7 +14,6 @@ import life.cookedfox.bookmarkenhance.service.impl.SnapshotService;
 import life.cookedfox.bookmarkenhance.utils.LambdaUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -52,7 +51,7 @@ public class BookmarkController {
     }
 
     @PostMapping("/addTask")
-    public String addTask(@Validated @RequestBody Bookmark bookmark) {
+    public String addTask(@RequestBody Bookmark bookmark) {
         final String url = bookmark.getUrl().trim();
 
         // 是否已经解析过的url
