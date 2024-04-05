@@ -193,7 +193,8 @@
 
         currentPage = pageNum;
         var keyword = document.getElementById('search-input').value;
-        var url = `http://localhost:8082/bookmark/search?keyword=${encodeURIComponent(keyword)}&pageNum=${pageNum}&pageSize=${pageSize}`;
+        // var url = `http://localhost:8082/bookmark/search?keyword=${encodeURIComponent(keyword)}&pageNum=${pageNum}&pageSize=${pageSize}`;
+        var url = `/bookmark/search?keyword=${encodeURIComponent(keyword)}&pageNum=${pageNum}&pageSize=${pageSize}`;
 
         fetch(url)
             .then(response => response.json())
@@ -205,7 +206,7 @@
                     var itemDiv = document.createElement('div');
                     itemDiv.className = 'result-item';
                     itemDiv.onclick = function () {
-                        window.open(item.snapshotUrl, '_blank');
+                        window.open(`/snapshot/${btoa(item.url)}.html`, '_blank');
                     };
 
                     var highlightsDiv = document.createElement('div');
@@ -299,7 +300,8 @@
 
     // 确认删除
     function confirmDelete(docId) {
-        var url = `http://localhost:8082/bookmark/deleteDoc?id=${docId}`;
+        // var url = `http://localhost:8082/bookmark/deleteDoc?id=${docId}`;
+        var url = `/bookmark/deleteDoc?id=${docId}`;
         fetch(url, {method: 'GET'})
             .then(data => {
                 alert('删除成功');

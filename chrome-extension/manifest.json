@@ -19,7 +19,8 @@
   "action": {
     "default_title": "Bookmarkwarden",
     "default_icon": "imgs/icon_19.png",
-    "default_popup": "html/popup.html"
+    "default_popup": "html/popup.html",
+    "service_worker": "js/popup.js"
   },
   "content_scripts": [
     {
