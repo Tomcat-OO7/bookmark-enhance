@@ -61,6 +61,7 @@ public class BookmarkController {
             return "EXIST INDEX";
         }
 
+        log.info("{} task offer", url);
         lockMap.computeIfAbsent(url, e -> new ReentrantLock());
         CompletableFuture.runAsync(() -> {
             ReentrantLock reentrantLock = lockMap.computeIfAbsent(url, e -> new ReentrantLock());
@@ -103,6 +104,7 @@ public class BookmarkController {
                             .content(content)
                             .aiTagList(List.of())
                             .build());
+                    log.info("{} task end", url);
                 } finally {
                     if (reentrantLock.isLocked()) {
                         reentrantLock.unlock();
@@ -111,7 +113,7 @@ public class BookmarkController {
                 }
             }
         }, executor).exceptionally((e) -> {
-            log.error("异常", e);
+            log.error("{} task error", url, e);
             return null;
         });
         return "OK";

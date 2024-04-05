@@ -20,10 +20,16 @@ public class SnapshotService {
     String uri;
 
     public void snapshot(String url) {
-        SnapshotResult res = restClient.post()
-                .uri(uri)
-                .body(Map.of("url", url))
-                .retrieve().body(SnapshotResult.class);
+        SnapshotResult res;
+        try {
+            res = restClient.post()
+                    .uri(uri)
+                    .body(Map.of("url", url))
+                    .retrieve().body(SnapshotResult.class);
+        } catch (Exception e) {
+            log.error("{} snapshot异常", url, e);
+            res = SnapshotResult.builder().code(500).build();
+        }
         log.info("{} snapshot result {}", url, res);
     }
 }
