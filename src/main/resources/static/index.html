@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>简单搜索引擎</title>
+    <title>Bookmarkwarden</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -206,7 +206,7 @@
                     var itemDiv = document.createElement('div');
                     itemDiv.className = 'result-item';
                     itemDiv.onclick = function () {
-                        window.open(`/snapshot/${btoa(item.url)}.html`, '_blank');
+                        window.open(item.url, '_blank');
                     };
 
                     var highlightsDiv = document.createElement('div');
@@ -235,8 +235,11 @@
                     var linkIcon = document.createElement('div');
                     linkIcon.className = 'icon';
                     var linkIconA = document.createElement('a');
-                    linkIconA.href = item.url;
+                    linkIconA.href = `/snapshot/${btoa(item.url)}.html`;
                     linkIconA.target = '_blank';
+                    linkIconA.addEventListener('click', function(event) {
+                        event.stopPropagation(); // 阻止事件冒泡
+                    });
                     var linkIconImg = document.createElement('img');
                     linkIconImg.src = 'link.svg';
                     linkIconImg.alt = 'Link';
