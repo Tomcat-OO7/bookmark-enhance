@@ -50,3 +50,10 @@ document.getElementById('send-btn').addEventListener('click', function () {
         });
     });
 });
+
+document.getElementById('logo').addEventListener('click', function () {
+    chrome.storage.sync.get('requestUrl', (data) => {
+        let requestUrl = data.requestUrl || "http://localhost:3005"; // 如果没有获取到值，使用默认地址
+        window.open(`${requestUrl}/index.html`, '_blank'); // 在新标签页中打开 URL
+    });
+});
