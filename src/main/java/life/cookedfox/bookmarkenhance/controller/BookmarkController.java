@@ -61,6 +61,7 @@ public class BookmarkController {
             return "EXIST INDEX";
         }
 
+        lockMap.computeIfAbsent(url, e -> new ReentrantLock());
         CompletableFuture.runAsync(() -> {
             ReentrantLock reentrantLock = lockMap.computeIfAbsent(url, e -> new ReentrantLock());
             if (reentrantLock.tryLock()) {
