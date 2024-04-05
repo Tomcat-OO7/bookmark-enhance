@@ -1,12 +1,15 @@
 import express from 'express';
 import {execSync} from 'child_process';
 import fs from 'fs';
+import path from 'path';
 
 const app = express();
 const port = 3000;
+const outputDir = "/home/node";
 
 // Middleware to parse JSON request body
 app.use(express.json());
+app.use(express.static(path.join(outputDir)));
 
 // Define a POST endpoint
 app.post('/snapshot', (req, res) => {
@@ -15,7 +18,6 @@ app.post('/snapshot', (req, res) => {
     const data = req.body;
     const url = data['url'];
 
-    const outputDir = "/home/node";
     const filename = btoa(url) + ".html"
 
     if (fs.existsSync(`${outputDir}/${filename}`)) {
