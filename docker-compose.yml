@@ -1,6 +1,13 @@
 version: '3.8'
 
 services:
+  kimi-free-api:
+    image: vinlic/kimi-free-api:latest
+    restart: always
+    ports:
+      - "3002:8000"
+    environment:
+      - TZ=Asia/Shanghai
   extractor:
     image: node:20
     volumes:
@@ -11,7 +18,10 @@ services:
     ports:
       - "3003:3000"
   snapshotor:
-    image: my-singlefile
+    build:
+      context: ./snapshotor
+      dockerfile: Dockerfile
+    image: local-singlefile:latest
     volumes:
       - ./snapshotor:/app
       - ./snapshot:/home/node
@@ -19,3 +29,13 @@ services:
     command: node index.js
     ports:
       - "3004:3000"
+  main:
+    image: openjdk:21-jdk-bullseye
+    volumes:
+      - ./target/bookmark-enhance-0.0.1-SNAPSHOT.tar.gz:/app/bookmark-enhance-0.0.1-SNAPSHOT.tar.gz
+      - ./index:/app/bookmark-enhance-0.0.1-SNAPSHOT/index
+      - ./snapshot:/app/bookmark-enhance-0.0.1-SNAPSHOT/snapshot
+    working_dir: /app
+    command: sh -c "tar -xzf bookmark-enhance-0.0.1-SNAPSHOT.tar.gz && cd bookmark-enhance-0.0.1-SNAPSHOT && java -jar bookmark-enhance-0.0.1-SNAPSHOT.jar"
+    ports:
+      - "3005:8082"
