@@ -28,7 +28,7 @@ import java.util.concurrent.locks.ReentrantLock;
 @RequestMapping("/bookmark")
 public class BookmarkController {
 
-    private static final Executor executor = Executors.newSingleThreadExecutor();
+    private static final Executor executor = Executors.newFixedThreadPool(3);
 
     private static final ConcurrentHashMap<String, ReentrantLock> lockMap = new ConcurrentHashMap<>();
 

@@ -28,6 +28,9 @@ app.post('/snapshot', (req, res) => {
         execSync("node /usr/src/app/node_modules/single-file-cli/single-file \"" + url + "\" "
             + filename
             + ` --browser-executable-path /usr/bin/chromium-browser --output-directory ${outputDir}`
+            + ' --block-images true'
+            + ' --block-fonts true'
+            + ' --compress-CSS true'
             + " --dump-content"
         );
 
