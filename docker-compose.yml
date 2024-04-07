@@ -18,17 +18,15 @@ services:
     ports:
       - "3003:3000"
   snapshotor:
-    build:
-      context: ./snapshotor
-      dockerfile: Dockerfile
-    image: local-singlefile:latest
+    container_name: singlefile
+    image: screenbreak/singlefile-dockerized
+    entrypoint: python3
+    command: webserver.py
     volumes:
-      - ./snapshotor:/app
+      - ./snapshotor:/opt/app
       - ./snapshot:/home/node
-    working_dir: /app
-    command: node index.js
     ports:
-      - "3004:3000"
+      - "3004:80"
   main:
     image: openjdk:21-jdk-bullseye
     volumes:
