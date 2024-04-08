@@ -18,7 +18,6 @@ services:
     ports:
       - "3003:3000"
   snapshotor:
-    container_name: singlefile
     image: screenbreak/singlefile-dockerized
     entrypoint: python3
     command: webserver.py
