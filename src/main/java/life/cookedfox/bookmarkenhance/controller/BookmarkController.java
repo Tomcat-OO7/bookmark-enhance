@@ -145,11 +145,8 @@ public class BookmarkController {
             termSearch.forEach(e -> {
                 Map<String, String> highlight = new HashMap<>();
                 highlight.put(LambdaUtils.name(Bookmark::getUrl), "<b>" + keyword + "</b>");
-                if (StringUtils.isEmpty(e.getAiSummary())) {
+                if (!StringUtils.isEmpty(e.getAiSummary())) {
                     highlight.put(LambdaUtils.name(Bookmark::getAiSummary), e.getAiSummary());
-                }
-                if (StringUtils.isEmpty(e.getContent())) {
-                    highlight.put(LambdaUtils.name(Bookmark::getContent), e.getContent());
                 }
                 e.setHighlight(highlight);
             });
