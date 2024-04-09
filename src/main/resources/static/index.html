@@ -24,6 +24,17 @@
             box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
             }
 
+        .no-results {
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            text-align: center;
+            font-size: 16px;
+            color: grey;
+            opacity: 0.6;
+            }
+
         #search-button {
             padding: 10px 20px;
             font-size: 16px;
@@ -201,6 +212,13 @@
             .then(data => {
                 var resultsDiv = document.getElementById('results');
                 resultsDiv.innerHTML = '';
+
+                if (data.content.length === 0) {
+                    var noResultsDiv = document.createElement('div');
+                    noResultsDiv.className = 'no-results';
+                    noResultsDiv.innerHTML = '<p>🫵未找到相关内容，请尝试其他关键词。</p>';
+                    resultsDiv.appendChild(noResultsDiv);
+                }
 
                 data.content.forEach(item => {
                     var itemDiv = document.createElement('div');
