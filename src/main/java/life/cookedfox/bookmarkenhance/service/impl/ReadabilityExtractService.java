@@ -2,10 +2,10 @@ package life.cookedfox.bookmarkenhance.service.impl;
 
 import io.micrometer.common.util.StringUtils;
 import jakarta.annotation.Resource;
+import life.cookedfox.bookmarkenhance.configuration.ApplicationPropertiesConfig;
 import life.cookedfox.bookmarkenhance.model.ExtractResult;
 import life.cookedfox.bookmarkenhance.service.IExtractService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -20,8 +20,8 @@ public class ReadabilityExtractService implements IExtractService {
     @Resource
     RestClient restClient;
 
-    @Value("${extract.readability.uri}")
-    String uri;
+    @Resource
+    ApplicationPropertiesConfig applicationPropertiesConfig;
 
     @Override
     public String extract(String url, String jsPath) {
@@ -34,7 +34,7 @@ public class ReadabilityExtractService implements IExtractService {
         ExtractResult result;
         try {
             result = restClient.post()
-                    .uri(uri)
+                    .uri(applicationPropertiesConfig.getExtractReadabilityUri())
                     .body(body)
                     .retrieve()
                     .body(ExtractResult.class);

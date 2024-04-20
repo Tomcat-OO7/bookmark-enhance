@@ -1,6 +1,9 @@
 package life.cookedfox.bookmarkenhance.lucene;
 
 import io.micrometer.common.util.StringUtils;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+import life.cookedfox.bookmarkenhance.configuration.ApplicationPropertiesConfig;
 import life.cookedfox.bookmarkenhance.constant.ApplicationConstants;
 import life.cookedfox.bookmarkenhance.model.Bookmark;
 import life.cookedfox.bookmarkenhance.model.Page;
@@ -25,7 +28,6 @@ import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.search.highlight.SimpleSpanFragmenter;
 import org.apache.lucene.store.FSDirectory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.wltea.analyzer.lucene.IKAnalyzer;
 
@@ -39,12 +41,12 @@ import java.util.stream.Collectors;
 @Component
 public class IndexEngine {
 
-    @Value("${lucene.index.path}")
-    String indexPath;
+    @Resource
+    ApplicationPropertiesConfig applicationPropertiesConfig;
 
     @SneakyThrows
     public void addDocument(Bookmark bookmark) {
-        FSDirectory directory = FSDirectory.open(Paths.get(indexPath));
+        FSDirectory directory = FSDirectory.open(Paths.get(applicationPropertiesConfig.getLuceneIndexPath()));
         PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new IKAnalyzer(), Map.of(LambdaUtils.name(Bookmark::getAiTagList), new WhitespaceAnalyzer()));
 
         IndexWriterConfig config = new IndexWriterConfig(analyzer);
@@ -73,7 +75,7 @@ public class IndexEngine {
         } else {
             return Page.of(pageNumber, pageSize, 0, List.of());
         }
-        FSDirectory directory = FSDirectory.open(Paths.get(indexPath));
+        FSDirectory directory = FSDirectory.open(Paths.get(applicationPropertiesConfig.getLuceneIndexPath()));
         Analyzer analyzer = new IKAnalyzer();
 
         try (DirectoryReader directoryReader = DirectoryReader.open(directory)) {
@@ -135,7 +137,7 @@ public class IndexEngine {
         } else {
             return List.of();
         }
-        FSDirectory directory = FSDirectory.open(Paths.get(indexPath));
+        FSDirectory directory = FSDirectory.open(Paths.get(applicationPropertiesConfig.getLuceneIndexPath()));
         try (DirectoryReader directoryReader = DirectoryReader.open(directory)) {
             IndexSearcher indexSearcher = new IndexSearcher(directoryReader);
             Query query = new TermQuery(new Term(field, term));
@@ -161,10 +163,21 @@ public class IndexEngine {
 
     @SneakyThrows
     public void deleteDoc(String term, String field) {
-        FSDirectory directory = FSDirectory.open(Paths.get(indexPath));
+        FSDirectory directory = FSDirectory.open(Paths.get(applicationPropertiesConfig.getLuceneIndexPath()));
         try (IndexWriter writer = new IndexWriter(directory, new IndexWriterConfig(null))) {
             writer.deleteDocuments(new Term(field, term));
             writer.commit();
+        }
+    }
+
+    @SneakyThrows
+    @PostConstruct
+    public void initIndex() {
+        FSDirectory directory = FSDirectory.open(Paths.get(applicationPropertiesConfig.getLuceneIndexPath()));
+        PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new IKAnalyzer(), Map.of(LambdaUtils.name(Bookmark::getAiTagList), new WhitespaceAnalyzer()));
+
+        IndexWriterConfig config = new IndexWriterConfig(analyzer);
+        try (IndexWriter indexWriter = new IndexWriter(directory, config)) {
         }
     }
 }

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Properties</title>
+</head>
+<body>
+<h1>Edit Application Properties</h1>
+<textarea id="propertiesContent" rows="20" cols="70"></textarea><br>
+<button onclick="saveProperties()">Save Properties</button>
+<button onclick="refreshConfig()">Refresh Config</button>
+
+<script>
+    function fetchProperties() {
+        fetch('/properties')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('propertiesContent').value = data;
+            });
+    }
+
+    function saveProperties() {
+        const content = document.getElementById('propertiesContent').value;
+        fetch('/properties', {
+            method: 'POST',
+            headers: {'Content-Type': 'text/plain'},
+            body: content
+        }).then(() => alert('Properties saved successfully!'));
+    }
+
+    function refreshConfig() {
+        fetch('/actuator/refresh', {method: 'POST'})
+            .then(() => alert('Configuration refreshed successfully!'));
+    }
+
+    fetchProperties();
+</script>
+</body>
+</html>

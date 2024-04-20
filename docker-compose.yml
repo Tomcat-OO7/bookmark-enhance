@@ -33,6 +33,6 @@ services:
       - ./index:/app/bookmark-enhance-0.0.1-SNAPSHOT/index
       - ./snapshot:/app/bookmark-enhance-0.0.1-SNAPSHOT/snapshot
     working_dir: /app
-    command: sh -c "tar -xzf bookmark-enhance-0.0.1-SNAPSHOT.tar.gz && cd bookmark-enhance-0.0.1-SNAPSHOT && java -Xmx2048m -jar bookmark-enhance-0.0.1-SNAPSHOT.jar"
+    command: sh -c "tar -xzf bookmark-enhance-0.0.1-SNAPSHOT.tar.gz && cd bookmark-enhance-0.0.1-SNAPSHOT && java -Xmx2048m -jar -Dspring.config.location=./application.properties bookmark-enhance-0.0.1-SNAPSHOT.jar"
     ports:
       - "18001:8082"

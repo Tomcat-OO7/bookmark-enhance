@@ -1,9 +1,9 @@
 package life.cookedfox.bookmarkenhance.service.impl;
 
 import jakarta.annotation.Resource;
+import life.cookedfox.bookmarkenhance.configuration.ApplicationPropertiesConfig;
 import life.cookedfox.bookmarkenhance.model.SnapshotResult;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -16,14 +16,14 @@ public class SnapshotService {
     @Resource
     RestClient restClient;
 
-    @Value("${snapshot.uri}")
-    String uri;
+    @Resource
+    ApplicationPropertiesConfig applicationPropertiesConfig;
 
     public void snapshot(String url) {
         SnapshotResult res;
         try {
             res = restClient.post()
-                    .uri(uri)
+                    .uri(applicationPropertiesConfig.getSnapshotUri())
                     .body(Map.of("url", url))
                     .retrieve().body(SnapshotResult.class);
         } catch (Exception e) {
