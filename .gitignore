@@ -7,3 +7,7 @@ target/
 *.iml
 .DS_Store
 classes/
+.mvn/
+extractor/node_modules/
+index/*
+snapshot/*
