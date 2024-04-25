@@ -117,6 +117,7 @@ public class IndexEngine {
                             .url(document.get(LambdaUtils.name(Bookmark::getUrl)))
                             .snapshotUrl(document.get(LambdaUtils.name(Bookmark::getSnapshotUrl)))
                             .aiSummary(document.get(LambdaUtils.name(Bookmark::getAiSummary)))
+                            .content(document.get(LambdaUtils.name(Bookmark::getContent)))
                             .highlight(highlight)
                             .createTime(LocalDateTime.parse(document.get(LambdaUtils.name(Bookmark::getCreateTime))))
                             .aiTagList(List.of(document.get(LambdaUtils.name(Bookmark::getAiTagList)).split(" ")))
@@ -168,6 +169,12 @@ public class IndexEngine {
             writer.deleteDocuments(new Term(field, term));
             writer.commit();
         }
+    }
+
+    @SneakyThrows
+    public void updateDoc(Bookmark bookmark) {
+        deleteDoc(bookmark.getId(), LambdaUtils.name(Bookmark::getId));
+        addDocument(bookmark);
     }
 
     @SneakyThrows

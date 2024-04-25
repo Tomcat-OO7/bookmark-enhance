@@ -91,7 +91,7 @@ public class BookmarkController {
                             .map(Completion::getChoices)
                             .map(List::getFirst)
                             .map(Completion.ChoiceOfCompletion::getMessage)
-                            .map(Completion.MessageOfChoice::getContent).orElse("接口请求异常");
+                            .map(Completion.MessageOfChoice::getContent).orElse(ApplicationConstants.DEFAULT_EXCEPTION_DESC);
 
                     log.debug("{} extracting content", url);
                     String content = extractService.extract(url, "");

@@ -3,6 +3,7 @@ package life.cookedfox.bookmarkenhance.service.impl;
 import io.micrometer.common.util.StringUtils;
 import jakarta.annotation.Resource;
 import life.cookedfox.bookmarkenhance.configuration.ApplicationPropertiesConfig;
+import life.cookedfox.bookmarkenhance.constant.ApplicationConstants;
 import life.cookedfox.bookmarkenhance.model.ExtractResult;
 import life.cookedfox.bookmarkenhance.service.IExtractService;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +44,6 @@ public class ReadabilityExtractService implements IExtractService {
             log.error("{} 提取内容异常", url, e);
         }
 
-        return Optional.ofNullable(result).map(ExtractResult::getContent).orElse("未获取正文");
+        return Optional.ofNullable(result).map(ExtractResult::getContent).orElse(ApplicationConstants.DEFAULT_EMPTY_CONTENT_DESC);
     }
 }
