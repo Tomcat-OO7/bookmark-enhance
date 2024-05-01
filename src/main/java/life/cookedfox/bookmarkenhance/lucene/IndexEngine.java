@@ -23,10 +23,7 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.*;
-import org.apache.lucene.search.highlight.Highlighter;
-import org.apache.lucene.search.highlight.QueryScorer;
-import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
-import org.apache.lucene.search.highlight.SimpleSpanFragmenter;
+import org.apache.lucene.search.highlight.*;
 import org.apache.lucene.store.FSDirectory;
 import org.springframework.stereotype.Component;
 import org.wltea.analyzer.lucene.IKAnalyzer;
@@ -98,6 +95,7 @@ public class IndexEngine {
             QueryScorer scorer = new QueryScorer(query);
             Highlighter highlighter = new Highlighter(formatter, scorer);
             highlighter.setTextFragmenter(new SimpleSpanFragmenter(scorer));
+            highlighter.setEncoder(new SimpleHTMLEncoder());
 
             List<Bookmark> collect = Arrays.stream(topDocs.scoreDocs).map(e -> {
                 try {
