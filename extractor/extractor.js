@@ -3,7 +3,7 @@ import { Readability } from '@mozilla/readability';
 import { JSDOM } from 'jsdom';
 
 export function extract(url, jsPath) {
-    const htmlContent = fs.readFileSync('/home/node/' + btoa(url) + '.html','utf8');
+    const htmlContent = fs.readFileSync('/home/node/' + base64UrlEncode(url) + '.html','utf8');
 
     var doc = new JSDOM(htmlContent);
 
@@ -19,4 +19,16 @@ export function extract(url, jsPath) {
     let article = reader.parse();
     console.log(article);
     return article['textContent'];
+}
+
+
+
+function base64UrlEncode(str) {
+    // 将字符串转换为Base64
+    let base64Str = btoa(str);
+    // 将Base64中的 '+' 替换为 '-'
+    base64Str = base64Str.replace(/\+/g, '-');
+    // 将Base64中的 '/' 替换为 '_'
+    base64Str = base64Str.replace(/\//g, '_');
+    return base64Str;
 }

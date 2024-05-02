@@ -49,7 +49,7 @@ public class CompensateController {
             return "URL IS NOT INDEXED";
         }
 
-        String filename = Base64.getEncoder().encodeToString(url.getBytes(Charset.forName("utf-8")));
+        String filename = Base64.getUrlEncoder().encodeToString(url.getBytes(Charset.forName("utf-8")));
         FileCopyUtils.copy(file.getBytes(), new File(snapshotPath + File.separator + filename + ".html"));
 
         Bookmark first = bookmarks.getFirst();

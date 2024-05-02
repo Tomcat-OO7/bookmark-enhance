@@ -256,7 +256,7 @@
                     var linkIcon = document.createElement('div');
                     linkIcon.className = 'icon';
                     var linkIconA = document.createElement('a');
-                    linkIconA.href = `/snapshot/${btoa(item.url)}.html`;
+                    linkIconA.href = `/snapshot/${base64UrlEncode(item.url)}.html`;
                     linkIconA.target = '_blank';
                     var linkIconImg = document.createElement('img');
                     linkIconImg.src = 'link.svg';
@@ -388,6 +388,17 @@
         if (confirmDialog) {
             document.body.removeChild(confirmDialog);
         }
+    }
+
+
+    function base64UrlEncode(str) {
+        // 将字符串转换为Base64
+        let base64Str = btoa(str);
+        // 将Base64中的 '+' 替换为 '-'
+        base64Str = base64Str.replace(/\+/g, '-');
+        // 将Base64中的 '/' 替换为 '_'
+        base64Str = base64Str.replace(/\//g, '_');
+        return base64Str;
     }
 </script>
 </body>
