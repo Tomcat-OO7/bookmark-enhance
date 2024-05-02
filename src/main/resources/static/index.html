@@ -226,12 +226,12 @@
                 data.content.forEach(item => {
                     var itemDiv = document.createElement('div');
                     itemDiv.className = 'result-item';
-                    itemDiv.onclick = function () {
-                        window.open(item.url, '_blank');
-                    };
 
                     var highlightsDiv = document.createElement('div');
                     highlightsDiv.className = 'highlights';
+                    highlightsDiv.onclick = function () {
+                        window.open(item.url, '_blank');
+                    };
                     Object.values(item.highlight).forEach((value, index, array) => {
                         var highlightDiv = document.createElement('div');
                         highlightDiv.className = 'highlight';
@@ -258,9 +258,6 @@
                     var linkIconA = document.createElement('a');
                     linkIconA.href = `/snapshot/${btoa(item.url)}.html`;
                     linkIconA.target = '_blank';
-                    linkIconA.addEventListener('click', function(event) {
-                        event.stopPropagation(); // 阻止事件冒泡
-                    });
                     var linkIconImg = document.createElement('img');
                     linkIconImg.src = 'link.svg';
                     linkIconImg.alt = 'Link';
@@ -279,12 +276,31 @@
                         deleteDoc(item.id);
                     };
 
+                    // 文件上传图标
+                    var uploadInput = document.createElement('input');
+                    uploadInput.type = "file";
+                    uploadInput.className = 'fileInput';
+                    uploadInput.style.display = "none";
+                    uploadInput.addEventListener('change', (event) => manuelUploadSnapshot(event, item.url));
+
+                    var uploadIcon = document.createElement('div');
+                    uploadIcon.className = 'icon';
+                    var uploadIconImg = document.createElement('img');
+                    uploadIconImg.src = 'upload.svg';
+                    uploadIconImg.alt = 'upload';
+                    uploadIcon.appendChild(uploadIconImg);
+                    uploadIcon.onclick = function (event) {
+                        uploadInput.click();
+                    };
+
                     // 将图标添加到容器中
                     iconsDiv.appendChild(linkIcon);
                     iconsDiv.appendChild(deleteIcon);
+                    iconsDiv.appendChild(uploadIcon)
 
                     // 将图标容器添加到卡片中
                     itemDiv.appendChild(iconsDiv);
+                    itemDiv.appendChild(uploadInput);
 
                     var aiSummaryDiv = document.createElement('div');
                     aiSummaryDiv.className = 'ai-summary';
@@ -337,6 +353,28 @@
                 alert('删除失败');
                 closeConfirmDialog(); // 关闭确认对话框
             });
+    }
+
+    function manuelUploadSnapshot(event, url) {
+        const file = event.target.files[0];
+        if (!file) {
+            console.log('No file selected!');
+            return;
+        }
+
+        // 创建 FormData 对象
+        const formData = new FormData();
+        formData.append('file', file); // 添加文件
+        formData.append('url', url);
+
+        // 发送 POST 请求
+        fetch('/bookmark/compensate/manualUploadSnapshot', {
+            method: 'POST',
+            body: formData
+        }).then(data => {
+            alert('上传成功');
+            console.log('Success:', data)
+        }).catch(error => console.error('Error:', error));
     }
 
     // 取消删除
